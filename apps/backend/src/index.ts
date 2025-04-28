@@ -1,6 +1,6 @@
 import express from "express";
 import Jwt from "jsonwebtoken";
-import { contentModel, linkModel, userModel } from "@repo/database/db";
+import { contentModel, linkModel, userModel } from "./db";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import { genRanHex } from "./hashlink";
