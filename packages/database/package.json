@@ -2,9 +2,17 @@
   "name": "@repo/database",
   "version": "1.0.0",
   "description": "",
+  "exports": {
+    "./db": "./src/db.ts"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.8.3",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"

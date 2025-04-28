@@ -1,26 +1,20 @@
 import express from "express";
 import Jwt from "jsonwebtoken";
-import { z } from "zod";
-import { contentModel, linkModel, userModel } from "./db";
+import { contentModel, linkModel, userModel } from "@repo/database/db";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import { genRanHex } from "./hashlink";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { userContentSchema, userProfileSchema } from "@repo/common/types";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-const app = express();
+export const app: express.Application = express();
 app.use(cors());
 app.use(express.json());
 
 app.post("/api/v1/signup", async (req, res) => {
-  const userProfileSchema = z.object({
-    username: z.string().min(1, { message: "Name cannot be empty" }),
-    password: z
-      .string()
-      .min(8, { message: "password should be longer then eight characters" }),
-  });
   const parsedData = userProfileSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.status(411).json({
@@ -45,12 +39,6 @@ app.post("/api/v1/signup", async (req, res) => {
   }
 });
 app.post("/api/v1/signin", async (req, res) => {
-  const userProfileSchema = z.object({
-    username: z.string().min(1, { message: "Name cannot be empty" }),
-    password: z
-      .string()
-      .min(8, { message: "password should be longer then eight characters" }),
-  });
   const parsedData = userProfileSchema.safeParse(req.body);
 
   if (!parsedData.success) {
@@ -70,13 +58,21 @@ app.post("/api/v1/signin", async (req, res) => {
   });
   if (existingUser) {
     const token = Jwt.sign({ id: existingUser.id }, JWT_PASSWORD);
-    res.json({ token });
+    res.status(200).json({ token });
   } else {
-    res.status(403).json({ message: "incorrect cridentials" });
+    res.status(403).json({ message: "incorrect credentials" });
   }
 });
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
-  const { link, type, title } = req.body;
+  const parsedData = userContentSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    res.status(411).json({
+      message: "incorrect format",
+      error: parsedData.error.message,
+    });
+    return;
+  }
+  const { link, type, title } = parsedData.data;
   await contentModel.create({
     link,
     type,
@@ -157,6 +153,3 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
     content: content,
   });
 });
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT);

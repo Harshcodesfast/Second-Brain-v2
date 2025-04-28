@@ -1,1 +1,1 @@
-{"root":["./src/requestcustom.ts","./src/config.ts","./src/db.ts","./src/hashlink.ts","./src/index.ts","./src/middleware.ts"],"version":"5.8.2"}
+{"root":["./src/requestcustom.ts","./src/bin.ts","./src/config.ts","./src/db.ts","./src/hashlink.ts","./src/index.ts","./src/middleware.ts","./src/tests/content.test.ts","./src/tests/share.test.ts","./src/tests/signin.test.ts","./src/tests/signup.test.ts"],"version":"5.8.2"}
